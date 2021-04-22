@@ -1,12 +1,12 @@
 # Site settings
 title: Filip Ginter
 subtitle: home
-email: ginter@cs.utu.fi
+email: figint@utu.fi
 description: homepage 
 baseurl: "/"
 url: "https://fginter.github.io" # the base hostname & protocol for your site
 author:
-street_address: Department of IT
+street_address: Department of Computing
 city: University of Turku
 state: 
 zip_code: 20014
