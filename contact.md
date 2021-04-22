@@ -4,7 +4,7 @@ title: Contact
 ---
 
 <ul class="contact">
-  <li class="fa-at">University: <a href="#">{{ site.email }}</a> Silo.ai: filip.ginter@silo.ai</li>
+  <li class="fa-at">University: <a href="#">{{ site.email }}</a> Silo.ai: filip.ginter@silo.ai Lingsoft: filip@lingsoft.fi</li>
   <li class="fa-phone">No phone, please email</li>
   <li class="fa-envelope-o">Department of Computing<br />
             University of Turku<br />
