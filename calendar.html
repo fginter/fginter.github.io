@@ -3,7 +3,85 @@ layout: page
 title: Calendar
 ---
 
-Note that this calendar is not telling the whole story and you cannot assume an empty spot is automatically free. But a full spot is most likely full indeed. :)
-If the iframe below does not work for you, you can also try <a href="https://mail.utu.fi/owa/calendar/fb2676af5ec34fceb6ca8c10b39d6c55@utu.fi/fd5d1cfcae944309892e14adce9b16422415905051430990409/calendar.html">this direct link</a>
+<p>Times when I am already booked. An empty slot is not automatically free, but a full one most likely is full. :)
+Updated about once an hour; shown in <strong id="cal-tz">your local time</strong>.
+You can also <a href="{{ '/busy.ics' | relative_url }}">subscribe to the .ics feed</a>.</p>
 
-<iframe src="https://mail.utu.fi/owa/calendar/fb2676af5ec34fceb6ca8c10b39d6c55@utu.fi/fd5d1cfcae944309892e14adce9b16422415905051430990409/calendar.html" style=" border:solid 1px #777 " width="800" height="600" frameborder="0" scrolling="yes"></iframe>
+<div id="busy-calendar"></div>
+<p id="cal-error" style="display:none">The calendar could not be loaded. Try the <a href="{{ '/busy.ics' | relative_url }}">.ics feed</a> directly.</p>
+
+<style>
+  #busy-calendar { margin-bottom: 2em; font-size: 0.85em; }
+
+  /* undo Editorial theme styles that leak into FullCalendar */
+  #busy-calendar table { margin: 0; }
+  #busy-calendar tbody tr { border: 0; background: none; }
+  #busy-calendar td, #busy-calendar th { padding: 0; font-size: inherit; }
+  #busy-calendar .fc-list-table td { padding: 8px 14px; }
+  #busy-calendar .fc-toolbar-title { font-size: 1.2em; color: #3d4449; }
+  #busy-calendar .fc-col-header-cell-cushion,
+  #busy-calendar .fc-daygrid-day-number,
+  #busy-calendar .fc-list-day-cushion a { color: #3d4449; border-bottom: 0; }
+
+  #busy-calendar .fc-button {
+    height: auto; line-height: 1.5; padding: 0.3em 0.9em;
+    font-size: 0.8em; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 700;
+    background: transparent; color: #f56a6a !important;
+    border: 0; box-shadow: inset 0 0 0 2px #f56a6a; border-radius: 0.375em;
+  }
+  #busy-calendar .fc-button:hover:not(:disabled) { background: rgba(245, 106, 106, 0.05); }
+  #busy-calendar .fc-button-active,
+  #busy-calendar .fc-button-active:hover { background: #f56a6a !important; color: #fff !important; }
+  #busy-calendar .fc-button:disabled { opacity: 0.35; }
+  #busy-calendar .fc-button:focus { box-shadow: inset 0 0 0 2px #f56a6a; }
+  #busy-calendar .fc-button-group > .fc-button + .fc-button { margin-left: 0.3em; }
+  #busy-calendar a.fc-event, #busy-calendar .fc-list-event-title a { border-bottom: 0; }
+  #busy-calendar .fc-daygrid-dot-event, #busy-calendar .fc-list-event-title a { color: #3d4449; }
+
+  #busy-calendar .fc-timegrid-slot { height: 1.8em; }
+  #busy-calendar .fc-day-today { background: #f5f6f7; }
+
+  #busy-calendar .busy-Busy      { --fc-event-bg-color: #3d4449; --fc-event-border-color: #3d4449; }
+  #busy-calendar .busy-Tentative { --fc-event-bg-color: #a9b1b6; --fc-event-border-color: #a9b1b6; }
+  #busy-calendar .busy-Away      { --fc-event-bg-color: #f56a6a; --fc-event-border-color: #f56a6a; }
+  #busy-calendar .fc-list-event.busy-Busy .fc-list-event-dot      { border-color: #3d4449; }
+  #busy-calendar .fc-list-event.busy-Tentative .fc-list-event-dot { border-color: #a9b1b6; }
+  #busy-calendar .fc-list-event.busy-Away .fc-list-event-dot      { border-color: #f56a6a; }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/ical.js@1.5.0/build/ical.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.21/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/icalendar@6.1.21/index.global.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  try {
+    document.getElementById('cal-tz').textContent =
+      Intl.DateTimeFormat().resolvedOptions().timeZone.replace(/_/g, ' ') + ' time';
+  } catch (e) {}
+
+  var narrow = window.matchMedia('(max-width: 736px)').matches;
+  var calendar = new FullCalendar.Calendar(document.getElementById('busy-calendar'), {
+    initialView: narrow ? 'listWeek' : 'timeGridWeek',
+    headerToolbar: narrow
+      ? { left: 'prev,next', center: 'title', right: 'today' }
+      : { left: 'prev,next today', center: 'title', right: 'timeGridWeek,dayGridMonth,listWeek' },
+    buttonText: { today: 'Today', week: 'Week', month: 'Month', list: 'List' },
+    firstDay: 1,
+    locale: 'en-gb',
+    height: 'auto',
+    allDaySlot: true,
+    slotMinTime: '07:00:00',
+    slotMaxTime: '20:00:00',
+    scrollTime: '08:00:00',
+    nowIndicator: true,
+    eventTimeFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
+    slotLabelFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
+    events: { url: '{{ "/busy.ics" | relative_url }}', format: 'ics' },
+    eventClassNames: function (arg) { return ['busy-' + arg.event.title]; },
+    eventSourceFailure: function () {
+      document.getElementById('cal-error').style.display = '';
+    }
+  });
+  calendar.render();
+});
+</script>
