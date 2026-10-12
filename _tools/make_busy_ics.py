@@ -28,7 +28,7 @@ UTC = dt.timezone.utc
 
 # Exchange busy status (X-MICROSOFT-CDO-BUSYSTATUS) -> label in the feed.
 # FREE is dropped entirely; anything unknown counts as busy.
-STATUS_LABEL = {"BUSY": "Busy", "TENTATIVE": "Tentative", "OOF": "Away"}
+STATUS_LABEL = {"OOF": "Away"}
 
 
 def parse_args():
@@ -96,9 +96,7 @@ def busy_label(ev):
         return None
     if ms in STATUS_LABEL:
         return STATUS_LABEL[ms]
-    if str(ev.get("STATUS", "")).upper() == "TENTATIVE":
-        return "Tentative"
-    return "Busy"
+    return STATUS_LABEL.get(ms, "Busy")
 
 
 def collect_blocks(cal, start, end, fetch_all):

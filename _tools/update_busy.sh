@@ -18,14 +18,12 @@ source "${BUSY_ICS_ENV:-$HOME/.config/busy-ics.env}"
 export CALDAV_PASSWORD
 
 cd "$REPO"
-git pull --quiet --rebase
+#git pull --quiet --rebase
 
-$REPO/venv/bin/python3 _tools/make_busy_ics.py \
+$REPO/_tools/venv/bin/python3 _tools/make_busy_ics.py \
     --url "$CALDAV_URL" --user "$CALDAV_USER" \
     ${CALDAV_CALENDAR:+--calendar "$CALDAV_CALENDAR"} \
     --out busy.ics
-
-exit 0
 
 git add busy.ics
 if git diff --cached --quiet; then
