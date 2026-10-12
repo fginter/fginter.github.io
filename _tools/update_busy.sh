@@ -25,10 +25,11 @@ $REPO/_tools/venv/bin/python3 _tools/make_busy_ics.py \
     ${CALDAV_CALENDAR:+--calendar "$CALDAV_CALENDAR"} \
     --out busy.ics
 
+
 git add busy.ics
-if git diff --cached --quiet; then
-    exit 0
+git diff --cached --quiet || git commit --quiet -m "Update busy.ics"
+
+if [ -n "$(git log '@{u}..HEAD' --oneline)" ]; then
+    git push --quiet
+    echo "$(date -Is) pushed busy.ics"
 fi
-git commit --quiet -m "Update busy.ics"
-git push --quiet
-echo "$(date -Is) pushed new busy.ics"
