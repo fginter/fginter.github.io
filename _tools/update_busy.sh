@@ -20,10 +20,12 @@ export CALDAV_PASSWORD
 cd "$REPO"
 git pull --quiet --rebase
 
-"${PYTHON:-python3}" _tools/make_busy_ics.py \
+$REPO/venv/bin/python3 _tools/make_busy_ics.py \
     --url "$CALDAV_URL" --user "$CALDAV_USER" \
     ${CALDAV_CALENDAR:+--calendar "$CALDAV_CALENDAR"} \
     --out busy.ics
+
+exit 0
 
 git add busy.ics
 if git diff --cached --quiet; then
