@@ -18,7 +18,7 @@ source "${BUSY_ICS_ENV:-$HOME/.config/busy-ics.env}"
 export CALDAV_PASSWORD
 
 cd "$REPO"
-#git pull --quiet --rebase
+git pull --quiet --rebase
 
 $REPO/_tools/venv/bin/python3 _tools/make_busy_ics.py \
     --url "$CALDAV_URL" --user "$CALDAV_USER" \
